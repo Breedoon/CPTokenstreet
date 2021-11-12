@@ -1,0 +1,1 @@
+GET http://127.0.0.1:5000/api/v1/balance?token=TST&wallet=0x60Edfe106902d06A495CE807856647B3f0EdF6Fd&pk=1470311f9a955c0d9eae56d60d740bd6
