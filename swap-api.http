@@ -1,5 +1,22 @@
-GET http://127.0.0.1:5000/api/v1/balance?token=TST&wallet=0x60Edfe106902d06A495CE807856647B3f0EdF6Fd&pk=1470311f9a955c0d9eae56d60d740bd6
+### authorize (save wallet in cookies) and check ETH balance
+GET http://127.0.0.1:5000/api/v1/balance?wallet=0x60Edfe106902d06A495CE807856647B3f0EdF6Fd&pk=1470311f9a955c0d9eae56d60d740bd6
 
-###
+### check TST balance
+GET http://127.0.0.1:5000/api/v1/balance?token=TST&pk=1470311f9a955c0d9eae56d60d740bd6
 
-GET http://127.0.0.1:5000/api/v1/price?buy-token=TST&buy-amt=10&pk=1470311f9a955c0d9eae56d60d740bd6
+### price for selling 10 TST
+GET http://127.0.0.1:5000/api/v1/price?sell-token=TST&sell-amt=10&pk=1470311f9a955c0d9eae56d60d740bd6
+
+### price in TST for buying 0.001 ETH
+GET http://127.0.0.1:5000/api/v1/price?sell-token=TST&buy-amt=0.001&pk=1470311f9a955c0d9eae56d60d740bd6
+
+
+### price for buying 10 TST for any other (ETH)
+GET http://127.0.0.1:5000/api/v1/price?buy-token=TST&sell-token=ETH&buy-amt=10&pk=1470311f9a955c0d9eae56d60d740bd6
+
+
+### make a trade: buy 10 TST
+GET http://127.0.0.1:5000/api/v1/trade?buy-token=TST&buy-amt=10&pk=1470311f9a955c0d9eae56d60d740bd6
+
+### check TST balance again
+GET http://127.0.0.1:5000/api/v1/balance?token=TST&pk=1470311f9a955c0d9eae56d60d740bd6

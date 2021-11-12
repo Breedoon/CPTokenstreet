@@ -28,6 +28,15 @@ def balance():
 
 @app.route('/api/v1/price', methods=['GET'])
 def price():
+    return exchange(make_transaction=False)  # ie, just check the price
+
+
+@app.route('/api/v1/trade', methods=['GET'])
+def trade():
+    return exchange(make_transaction=True)  # ie, just check the price
+
+
+def exchange(make_transaction=False):
     if request.args.get("sell-amt") is not None:  # if given sell amt, assume it's price input
         sell_amt = True
         amt = request.args.get("sell-amt")
@@ -43,19 +52,31 @@ def price():
     try:
         wallet, private_key, sell_token_addr, buy_token_addr = get_credentials(wallet, pk1, sell_token, buy_token)
         uniswap = Uniswap(wallet, private_key, version=UNISWAP_V, provider=PROVIDER)
-        if sell_amt:  # specified sell (input) price
-            buy_price = uniswap.get_price_input(sell_token_addr, buy_token_addr, amt) / 1e18
-        else:
-            sell_price = uniswap.get_price_output(sell_token_addr, buy_token_addr, amt) / 1e18
+        if not make_transaction:  # just checking the price
+            if sell_amt:  # specified sell (input) price
+                buy_price = uniswap.get_price_input(sell_token_addr, buy_token_addr, amt) / 1e18
+            else:
+                sell_price = uniswap.get_price_output(sell_token_addr, buy_token_addr, amt) / 1e18
+        else:  # making a transaction (buying or selling)
+            if sell_amt:  # specified sell (input) price
+                transaction_id = uniswap.make_trade(sell_token_addr, buy_token_addr, amt)
+            else:
+                transaction_id = uniswap.make_trade_output(sell_token_addr, buy_token_addr, amt)
+
     except Exception as e:
         return jsonify({'Error': str(e)}), 400
 
-    return jsonify({
-        'sell-token': sell_token,
-        'buy-token': buy_token,
-        'sell': sell_price,
-        'buy': buy_price
-    })
+    if not make_transaction:  # just checking the price
+        return jsonify({
+            'sell-token': sell_token,
+            'buy-token': buy_token,
+            'sell-amt': sell_price,
+            'buy-amt': buy_price
+        })
+    else:  # made a transaction
+        return jsonify({
+            'transaction-id': transaction_id.hex()
+        })
 
 
 def process_args(wallet, pk1, token1, token2=None, amt=None):
@@ -72,15 +93,10 @@ def process_args(wallet, pk1, token1, token2=None, amt=None):
 
     return_args = wallet, pk1, token1, token2
 
-    print(return_args)
-
-    print(amt)
     if amt is not None:
         amt = int(float(amt) * 1e18)
         return_args = return_args + (amt,)
-        print(return_args)
 
-    print(return_args)
     return return_args
 
 

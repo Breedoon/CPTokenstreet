@@ -31,6 +31,9 @@ pool = '0x6426D297A5CfeC9A56eB6E3921e260c753af09d6'
 uniswap.get_price_input(eth, tst, 10 * 10 ** 18) / 1e18
 
 # %%
+r = uniswap.make_trade_output(eth, tst, 10 * 10 ** 18)
+r.hex()
+# %%
 
 address = "0x9978FC973Fe8CBC87dF923626e0CeA306C17aeb3"
 private_key = "8fb92dd2b1affe18655c7edafe2c9285c63115b9172f37f38ee030b4cd5469f4"
