@@ -6,7 +6,7 @@ from uniswap import Uniswap
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
-app.secret_key = os.urandom(24)
+app.secret_key = os.urandom(32)
 
 UNISWAP_V = 2  # specify which version of Uniswap to use
 PROVIDER = "https://ropsten.infura.io/v3/cfada245c0fa4dc9b5689accabd0cfc6"
@@ -14,7 +14,8 @@ PROVIDER = "https://ropsten.infura.io/v3/cfada245c0fa4dc9b5689accabd0cfc6"
 
 @app.route('/api/v1/balance', methods=['GET'])
 def balance():
-    wallet, pk1, token, _ = process_args(request.args.get("wallet"), request.args.get("pk"), request.args.get("token"))
+    wallet, pk1, token, _ = process_args(request.args.get("wallet"), request.headers.get('authorization'),
+                                         request.args.get("token"))
 
     try:
         wallet, private_key, token1_addr, _ = get_credentials(wallet, pk1, token)
@@ -31,9 +32,9 @@ def price():
     return exchange(make_transaction=False)  # ie, just check the price
 
 
-@app.route('/api/v1/trade', methods=['GET'])
+@app.route('/api/v1/trade', methods=['GET', 'POST'])
 def trade():
-    return exchange(make_transaction=True)  # ie, just check the price
+    return exchange(make_transaction=request.method == 'POST')  # transaction only if POST
 
 
 def exchange(make_transaction=False):
@@ -43,7 +44,8 @@ def exchange(make_transaction=False):
     else:  # not given sell amt, assume given buy-amt
         sell_amt = False
         amt = request.args.get("buy-amt")
-    wallet, pk1, sell_token, buy_token, amt = process_args(request.args.get("wallet"), request.args.get("pk"),
+    wallet, pk1, sell_token, buy_token, amt = process_args(request.args.get("wallet"),
+                                                           request.headers.get('authorization'),
                                                            request.args.get("sell-token"),
                                                            request.args.get("buy-token"),
                                                            amt=amt)
