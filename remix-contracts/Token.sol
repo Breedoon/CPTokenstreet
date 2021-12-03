@@ -35,6 +35,7 @@ contract Token is IERC20{
     uint public override totalSupply = 10000 * 10 ** 18;
     uint public decimals = 18;
     uint public mint_price;
+    bool public mintable = true;
     bool private unlocked = true;
     string public name = "TokenStreetTestv3";
     string public symbol = "TST3";
@@ -65,6 +66,10 @@ contract Token is IERC20{
         unlocked=false;
     }
 
+    function set_mintable(bool is_mintable) public onlyOwner {
+        mintable=is_mintable;
+    }
+
     function set_base_token(address token_address) public onlyOwner {
         base_token = token_address;
         emit SetBaseToken(base_token);
@@ -93,6 +98,7 @@ contract Token is IERC20{
     }
     
     function mint_tokens(address to, uint value) public {
+        require(mintable);
         totalSupply+=value;
         balances[to]+=value;
         emit Transfer(address(0), to, value);
