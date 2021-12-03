@@ -72,8 +72,8 @@ contract Token is IERC20{
     
     function allow_base_token() public{
         IERC20 _base_token = IERC20(base_token);
-        _base_token.approve(msg.sender, MAX_UINT);
-        emit ApprovedBaseToken(msg.sender);
+        _base_token.approve(address(this), MAX_UINT);
+        emit ApprovedBaseToken(address(this));
     }
 
     function get_base_token(address sender, uint value) public {
