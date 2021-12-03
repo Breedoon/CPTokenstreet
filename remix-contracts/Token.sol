@@ -47,7 +47,6 @@ contract Token is IERC20{
     event SetBaseToken(address token_address);
     event SetMintPrice(uint new_price);
     event BuyToken(address buyer, uint base_token_amount, uint minted_tokens);
-    event ApprovedBaseToken(address buyer);
     //event MintTokens(address to, uint value);
     
     constructor(){
@@ -75,12 +74,6 @@ contract Token is IERC20{
         emit SetBaseToken(base_token);
     }
     
-    function allow_base_token() public{
-        IERC20 _base_token = IERC20(base_token);
-        _base_token.approve(address(this), MAX_UINT);
-        emit ApprovedBaseToken(address(this));
-    }
-
     function get_base_token(address sender, uint value) public {
         IERC20 _base_token = IERC20(base_token);
         _base_token.transferFrom(sender, address(this), value);
